@@ -87,7 +87,10 @@ fn main() -> std::io::Result<()> {
     let addr = arg("--bind");
     let addr = match addr {
         Some(a) => a,
-        None => "0.0.0.0:9999",
+        None => {
+            println!("Usage: pingers --bind address:port");
+            "0.0.0.0:9999"
+        }
     };
 
     println!("Binding to: {addr:?}");
