@@ -78,7 +78,6 @@ fn handle_client(stream: TcpStream) {
 
 fn main() -> std::io::Result<()> {
     let listener = TcpListener::bind("0.0.0.0:9999")?;
-    let mut pool: Vec<thread::JoinHandle<T>> = Vec::new();
 
     for client in listener.incoming() {
         match client {
