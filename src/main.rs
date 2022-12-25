@@ -26,7 +26,7 @@ fn handle_client(stream: TcpStream) {
 
     for line in lines {
         match line {
-            Ok(command) => match command.to_ascii_lowercase().as_str() {
+            Ok(command) => match command.to_ascii_lowercase().as_str().trim() {
                 "ping" => {
                     println!("Recieved a \"ping\" command.");
                     client_msg("PONG");
@@ -43,7 +43,7 @@ fn handle_client(stream: TcpStream) {
                     println!("Recieved a \"whoami\" command.");
                     let peer_addr = stream.peer_addr().unwrap().to_string();
                     let local_addr = stream.local_addr().unwrap().to_string();
-                    let msg = format!("Peer: {peer_addr}\nLocal: {local_addr}");
+                    let msg = format!("You: {peer_addr}\nMe: {local_addr}");
                     client_msg(msg.as_str());
                 }
                 "time" => {
@@ -77,7 +77,21 @@ fn handle_client(stream: TcpStream) {
 }
 
 fn main() -> std::io::Result<()> {
-    let listener = TcpListener::bind("0.0.0.0:9999")?;
+    let args = std::env::args_os().skip(1).collect::<Vec<_>>();
+    let arg = |name: &str| {
+        args.windows(2)
+            .find(|a| a[0] == name)
+            .and_then(|a| a[1].to_str())
+    };
+
+    let addr = arg("--bind");
+    let addr = match addr {
+        Some(a) => a,
+        None => "0.0.0.0:9999",
+    };
+
+    println!("Binding to: {addr:?}");
+    let listener = TcpListener::bind(addr)?;
 
     for client in listener.incoming() {
         match client {

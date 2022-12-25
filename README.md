@@ -1,5 +1,7 @@
 # Pingers
 
-Quick n' Dirty Rust TCP Ping-Server 
+Quick n' Dirty Rust TCP Ping-server
 
-(not ICMP ECHO). 
+Using only the std rust crate
+
+Not ICMP ECHO
