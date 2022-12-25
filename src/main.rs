@@ -2,13 +2,11 @@ use std::io::{BufRead, BufReader, Write};
 use std::net::{Shutdown, TcpListener, TcpStream};
 use std::thread;
 
-// spawn me
 fn handle_client(stream: TcpStream) {
     let mut read_stream = stream.try_clone().unwrap();
     let mut write_stream = stream.try_clone().unwrap();
     let reader = BufReader::new(&mut read_stream);
     let lines = reader.lines();
-
     let mut client_msg = |msg: &str| {
         let mut buffer: Vec<u8> = Vec::new();
         let suf: &str;
@@ -21,9 +19,7 @@ fn handle_client(stream: TcpStream) {
         write_stream.write_all(&buffer).unwrap();
         write_stream.flush().unwrap();
     };
-
     client_msg("");
-
     for line in lines {
         match line {
             Ok(command) => match command.to_ascii_lowercase().as_str().trim() {
@@ -51,9 +47,7 @@ fn handle_client(stream: TcpStream) {
                     let now = std::time::SystemTime::now()
                         .duration_since(std::time::UNIX_EPOCH)
                         .unwrap();
-                    // 31557600 @ year
-                    // 86400 @ day
-                    // 3600 @ hour
+
                     let msg = format!("1970-01-01 00:00:00 UTC was {} seconds ago!", now.as_secs());
                     client_msg(msg.as_str());
                 }
@@ -83,7 +77,6 @@ fn main() -> std::io::Result<()> {
             .find(|a| a[0] == name)
             .and_then(|a| a[1].to_str())
     };
-
     let addr = arg("--bind");
     let addr = match addr {
         Some(a) => a,
@@ -92,10 +85,8 @@ fn main() -> std::io::Result<()> {
             "0.0.0.0:9999"
         }
     };
-
     println!("Binding to: {addr:?}");
     let listener = TcpListener::bind(addr)?;
-
     for client in listener.incoming() {
         match client {
             Ok(client) => {
